@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+.pebble-container {
+  height: 100%;
+  display: flex;
+  width:200%;
+  padding: 20px;
+  flex-direction: column;
+}
