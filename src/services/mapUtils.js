@@ -60,7 +60,7 @@ const genrateStyle = async (styleOptions) => {
 
 
 export const generateFeature = async (geoJSONFeature) => {
-  
+  //geoJsonFeature is an object of json format
   if (
     !geoJSONFeature.geometry.coordinates || geoJSONFeature.geometry.coordinates.length === 0
   ) {
@@ -69,7 +69,7 @@ export const generateFeature = async (geoJSONFeature) => {
   }
  // what the benfit 
   const [Feature] = await apiRegistry.getApis(["Feature"]);
-  //This takes a normal GeoJSON feature and creates an OpenLayers feature.
+//converted geoJson to ol features to draw on the map and add style and functionality
 
   return new Feature({ ...geoJSONFeature });
   
@@ -77,21 +77,39 @@ export const generateFeature = async (geoJSONFeature) => {
 
 
 
-export const drawFeatures = async (GEOJSONFeatures,options) => {
-  
+export const drawFeatures = async ({ baseFeatures = [], highlightFeatures = [], vectorLayerOptions = {}, styleOptions = {} }) => {
   try {
-    await ValidateVl(options.vectorLayerOptions);
-    const features = (await Promise.all(GEOJSONFeatures.map(generateFeature))).filter(Boolean);
-    const style = await genrateStyle(options.styleOptions);   
+    // 1️⃣ Ensure Vector Layer exists and clear if requested
+    await ValidateVl({ clear: vectorLayerOptions.clear ?? true });
 
-     features.forEach(f => f.setStyle(style)); 
-    VL.addFeatures(features);
+    const allFeatures = [];
+
+    
+    if (baseFeatures.length > 0) {
+      const olBaseFeatures = (await Promise.all(baseFeatures.map(generateFeature))).filter(Boolean);
+      const baseStyle = await genrateStyle(styleOptions.base);
+      olBaseFeatures.forEach(f => f.setStyle(baseStyle));
+      allFeatures.push(...olBaseFeatures);
+    }
+
   
-  
+    if (highlightFeatures.length > 0) {
+      const olHighlightFeatures = (await Promise.all(highlightFeatures.map(generateFeature))).filter(Boolean);
+      const color = baseFeatures.length > 0 
+                    ? ( "#F00000")  // red if base exists
+                    : ("#0000FF"); // blue if only highlight
+
+      const highlightStyle = await genrateStyle({ color });
+      olHighlightFeatures.forEach(f => f.setStyle(highlightStyle));
+      allFeatures.push(...olHighlightFeatures);
+    }
+
+   
+    VL.addFeatures(allFeatures);
 
   } catch (error) {
     console.error("[drawFeatures] ERROR:", error);
     throw error;
   }
-
 };
+

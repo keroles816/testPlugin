@@ -56,35 +56,23 @@ class MapClickComponent extends React.Component {
                 "error"
               );
             }
-            //then i got the layer and i search with it via layer id and crs and key and witch column intyersect with
-            
-
-            if (!GEOJSONFeatures || GEOJSONFeatures.length === 0) {
-              await drawFeatures([circleFeature], {
-                vectorLayerOptions: { clear: true   }, //Do not clear the layer before drawing
-
-                styleOptions: {
-                  color: "#0000FF",
-                  isFile: false,
-                  radius: 25
-                  //i need to clear after this draw
-                },
-              });
-            } else {
-              await drawFeatures(GEOJSONFeatures, {
-                vectorLayerOptions: { clear: true },
-                styleOptions: { color: "#808080", isFile: false , radius: 25 },
-              });
-
-              await drawFeatures([circleFeature], {
-                vectorLayerOptions: { clear: false },
-                styleOptions: { color: "#F00000", isFile: false , radius: 25 },
-              });
-            }
+          
 
 
-             const combined = [...GEOJSONFeatures, circleFeature];
-            this.props.setFeatures(combined);
+            await drawFeatures({
+              baseFeatures: GEOJSONFeatures ?? [],
+              highlightFeatures: [circleFeature],
+              vectorLayerOptions: { clear: true },
+              styleOptions: {
+                base: { color: "#808080", radius: 25, isFile: false },
+                highlight: { radius: 10, isFile: false } // color automatically red or blue
+              },
+            });
+
+
+
+             const combined = [...GEOJSONFeatures];
+          this.props.setFeatures(combined);
           })
           .catch((error) => {
             console.error("Error in callQuery Service" + error);
