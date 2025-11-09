@@ -87,7 +87,7 @@ export const drawFeatures = async ({ baseFeatures = [], highlightFeatures = [], 
     
     if (baseFeatures.length > 0) {
       const olBaseFeatures = (await Promise.all(baseFeatures.map(generateFeature))).filter(Boolean);
-      const baseStyle = await genrateStyle(styleOptions.base);
+      const baseStyle = await genrateStyle(styleOptions.base || { color: "#808080", radius: 25 });
       olBaseFeatures.forEach(f => f.setStyle(baseStyle));
       allFeatures.push(...olBaseFeatures);
     }
@@ -95,11 +95,13 @@ export const drawFeatures = async ({ baseFeatures = [], highlightFeatures = [], 
   
     if (highlightFeatures.length > 0) {
       const olHighlightFeatures = (await Promise.all(highlightFeatures.map(generateFeature))).filter(Boolean);
-      const color = baseFeatures.length > 0 
-                    ? ( "#F00000")  // red if base exists
-                    : ("#0000FF"); // blue if only highlight
 
-      const highlightStyle = await genrateStyle({ color });
+      
+      const color = baseFeatures.length > 0 
+                    ? (styleOptions.highlight?.color || "#F00000")  // red if base exists
+                    : (styleOptions.highlight?.color || "#0000FF"); // blue if only highlight
+
+      const highlightStyle = await genrateStyle({ ...styleOptions.highlight, color });
       olHighlightFeatures.forEach(f => f.setStyle(highlightStyle));
       allFeatures.push(...olHighlightFeatures);
     }
