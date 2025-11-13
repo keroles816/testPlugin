@@ -28,10 +28,19 @@ class MapClickResult extends React.Component {
 
   render() {
     const { t } = this.props;
-    const fature = this.props.features.map((index) => index.properties);
+    console.log("Features:", JSON.stringify(this.props.features[0], null, 2));
+
+const fature = this.props.features.map((feature) => ({
+  ...feature,
+  id: feature.id_0 || feature.id,
+  name: feature.properties.name,
+ 
+}));
+
+
 
     return (
-      <div className="penta-container-center">
+      <div>
         <Grid
           trComponents={trComponents}
           gridComponents={gridComponents}
@@ -49,13 +58,13 @@ class MapClickResult extends React.Component {
               {
                 id: "id",
                 name: t("Id"),
-                type: "srting",
+                type: "number",
                 display: "basic",
                 filterable: true,
-                sortable: false,
+                sortable: true,
               },
               {
-                id: "marker_name",
+                id: "name",
                 name: t("Marker name"),
                 type: "string",
                 display: "basic",
@@ -63,7 +72,7 @@ class MapClickResult extends React.Component {
                 sortable: false,
               },
               {
-                id: "features",
+                id:"feature",
                 name: "",
                 type: "component",
                 display: "basic",

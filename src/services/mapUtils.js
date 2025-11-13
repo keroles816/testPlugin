@@ -24,23 +24,23 @@ const ValidateVl = async (options) => {
 
 const genrateStyle = async (styleOptions) => {
       
-  return await apiRegistry.getApis(["Style", "Fill", "Stroke", "Circle", "Polygon"]).then(
-    ([Style, Fill, Stroke, Circle,Polygon]) => {  
+  return await apiRegistry.getApis(["Style", "Fill", "Stroke", "Circle"]).then(
+    ([Style, Fill, Stroke, Circle]) => {  
+
       let style;
-   
 
        if (styleOptions?.isFile) {
         
-         style= new Style({
+        style = new Style({
           image: new styleOptions.Icon({
             src: styleOptions.iconSrc,
           }),
         });
       } 
      
-      
       else {
-        style= new Style(
+
+        style = new Style(
           null,
           null,
           new Circle(
@@ -48,11 +48,10 @@ const genrateStyle = async (styleOptions) => {
             new Stroke( '#808080', 1, null ),
            styleOptions.radius || 25 //diameter of the circle
           )
-        )}
-        return style;
-    
+        )
+      }
       
-      
+      return style;
     }
   );
 };
@@ -94,7 +93,8 @@ export const drawFeatures = async ({ baseFeatures = [], highlightFeatures = [], 
 
   
     if (highlightFeatures.length > 0) {
-      const olHighlightFeatures = (await Promise.all(highlightFeatures[0].map(generateFeature))).filter(Boolean);
+      const olHighlightFeatures = (await Promise.all(highlightFeatures.map(generateFeature))).filter(Boolean);
+     
       
       
       const color = baseFeatures.length > 0 
@@ -102,13 +102,15 @@ export const drawFeatures = async ({ baseFeatures = [], highlightFeatures = [], 
       : (styleOptions.highlight?.color || "#0000FF"); 
       
       const highlightStyle = await genrateStyle({ ...styleOptions.highlight, color });
-     
-       
-
+      
+      
+      
+      
       olHighlightFeatures.forEach(f => f.setStyle(highlightStyle));
       allFeatures.push(...olHighlightFeatures);
     }
-
+    
+    
 
    
     VL.addFeatures(allFeatures);

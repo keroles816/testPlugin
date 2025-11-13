@@ -31,7 +31,7 @@ class MapClickComponent extends React.Component {
 
         const bufferPolygon = buffered.geometry;
         
-
+          console.log(buffered);
         //determine how to draw the circle how would you like
         const circleFeature = {
           type: "Feature",
@@ -62,6 +62,9 @@ class MapClickComponent extends React.Component {
             await drawFeatures({
               baseFeatures: GEOJSONFeatures ?? [],
               highlightFeatures: [circleFeature],
+      
+
+              
               vectorLayerOptions: { clear: true },
               styleOptions: {
                 base: { color: "#808080", radius: 25, isFile: false },
