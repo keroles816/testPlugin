@@ -24,23 +24,23 @@ const ValidateVl = async (options) => {
 
 const genrateStyle = async (styleOptions) => {
       
-  return await apiRegistry.getApis(["Style", "Fill", "Stroke", "Circle"]).then(
-    ([Style, Fill, Stroke, Circle]) => {  
-
+  return await apiRegistry.getApis(["Style", "Fill", "Stroke", "Circle", "Polygon"]).then(
+    ([Style, Fill, Stroke, Circle,Polygon]) => {  
       let style;
+   
 
        if (styleOptions?.isFile) {
         
-        style = new Style({
+         style= new Style({
           image: new styleOptions.Icon({
             src: styleOptions.iconSrc,
           }),
         });
       } 
      
+      
       else {
-
-        style = new Style(
+        style= new Style(
           null,
           null,
           new Circle(
@@ -48,10 +48,11 @@ const genrateStyle = async (styleOptions) => {
             new Stroke( '#808080', 1, null ),
            styleOptions.radius || 25 //diameter of the circle
           )
-        )
-      }
+        )}
+        return style;
+    
       
-      return style;
+      
     }
   );
 };
@@ -79,7 +80,6 @@ export const generateFeature = async (geoJSONFeature) => {
 
 export const drawFeatures = async ({ baseFeatures = [], highlightFeatures = [], vectorLayerOptions = {}, styleOptions = {} }) => {
   try {
-    // 1️⃣ Ensure Vector Layer exists and clear if requested
     await ValidateVl({ clear: vectorLayerOptions.clear ?? true });
 
     const allFeatures = [];
@@ -94,17 +94,21 @@ export const drawFeatures = async ({ baseFeatures = [], highlightFeatures = [], 
 
   
     if (highlightFeatures.length > 0) {
-      const olHighlightFeatures = (await Promise.all(highlightFeatures.map(generateFeature))).filter(Boolean);
-
+      const olHighlightFeatures = (await Promise.all(highlightFeatures[0].map(generateFeature))).filter(Boolean);
+      
       
       const color = baseFeatures.length > 0 
-                    ? (styleOptions.highlight?.color || "#F00000")  // red if base exists
-                    : (styleOptions.highlight?.color || "#0000FF"); // blue if only highlight
-
+      ? (styleOptions.highlight?.color || "#F00000")  
+      : (styleOptions.highlight?.color || "#0000FF"); 
+      
       const highlightStyle = await genrateStyle({ ...styleOptions.highlight, color });
+     
+       
+
       olHighlightFeatures.forEach(f => f.setStyle(highlightStyle));
       allFeatures.push(...olHighlightFeatures);
     }
+
 
    
     VL.addFeatures(allFeatures);
