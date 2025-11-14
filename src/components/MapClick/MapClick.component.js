@@ -5,7 +5,8 @@ import { callQueryService } from "../../services/queryService";
 import { drawFeatures } from "../../services/mapUtils";
 import { setFeatures } from "../actions";
 import * as turf from "@turf/turf";
-import { toLonLat, fromLonLat } from "ol/proj";
+import { animateOLFeature } from "../AnimatedFunction";
+
 
 class MapClickComponent extends React.Component {
   constructor(props) {
@@ -56,15 +57,20 @@ class MapClickComponent extends React.Component {
                 "error"
               );
             }
-          
+
+            console.log(GEOJSONFeatures);
+      if(GEOJSONFeatures.length > 0){
+          const intersected = GEOJSONFeatures[0]
+
+          circleFeature.geometry.coordinates = intersected.geometry.coordinates;
+
+      }
+              
 
 
             await drawFeatures({
               baseFeatures: GEOJSONFeatures ?? [],
-              highlightFeatures: [circleFeature],
-      
-
-              
+               highlightFeatures:  [circleFeature] ,       
               vectorLayerOptions: { clear: true },
               styleOptions: {
                 base: { color: "#808080", radius: 25, isFile: false },

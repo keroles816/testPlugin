@@ -28,7 +28,7 @@ class MapClickResult extends React.Component {
 
   render() {
     const { t } = this.props;
-    console.log("Features:", JSON.stringify(this.props.features[0], null, 2));
+  
 
 const fature = this.props.features.map((feature) => ({
   ...feature,

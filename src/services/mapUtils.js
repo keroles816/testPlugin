@@ -1,5 +1,5 @@
 import { apiRegistry, actionsRegistry } from '@penta-b/ma-lib';
-
+import { animateOLFeature } from '../components/AnimatedFunction';
 let VL = null;
 
 const ValidateVl = async (options) => {
@@ -102,12 +102,12 @@ export const drawFeatures = async ({ baseFeatures = [], highlightFeatures = [], 
       : (styleOptions.highlight?.color || "#0000FF"); 
       
       const highlightStyle = await genrateStyle({ ...styleOptions.highlight, color });
-      
-      
-      
+    
       
       olHighlightFeatures.forEach(f => f.setStyle(highlightStyle));
       allFeatures.push(...olHighlightFeatures);
+
+
     }
     
     
