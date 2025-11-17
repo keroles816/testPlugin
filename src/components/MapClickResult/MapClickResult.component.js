@@ -27,17 +27,13 @@ class MapClickResult extends React.Component {
   }
 
   render() {
-    const { t } = this.props;
-  
-
+    const { t } = this.props
 const fature = this.props.features.map((feature) => ({
   ...feature,
   id: feature.id_0 || feature.id,
   name: feature.properties.name,
  
 }));
-
-
 
     return (
       <div>

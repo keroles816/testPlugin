@@ -5,7 +5,6 @@ import { callQueryService } from "../../services/queryService";
 import { drawFeatures } from "../../services/mapUtils";
 import { setFeatures } from "../actions";
 import * as turf from "@turf/turf";
-import { animateOLFeature } from "../AnimatedFunction";
 
 
 class MapClickComponent extends React.Component {
@@ -21,8 +20,7 @@ class MapClickComponent extends React.Component {
       if (currentClick && currentClick !== prevClick) {
         const coordinate = currentClick.coordinate;
 
-        //draw the circle with GeoJSON format
-        // create a buffer
+      
         const point = turf.point(coordinate);
         const buffered = turf.buffer(
           point,
@@ -31,9 +29,6 @@ class MapClickComponent extends React.Component {
         );
 
         const bufferPolygon = buffered.geometry;
-        
-          console.log(buffered);
-        //determine how to draw the circle how would you like
         const circleFeature = {
           type: "Feature",
           geometry: {
@@ -46,8 +41,6 @@ class MapClickComponent extends React.Component {
         };
 
         const LAYER = this.props?.settings.dataSettings.LAYER;
-        //this is a Layer i got from db to search with it
-        //settings injected or passed from the parent component
 
         callQueryService(LAYER, bufferPolygon)
           .then(async (GEOJSONFeatures) => {
@@ -57,20 +50,17 @@ class MapClickComponent extends React.Component {
                 "error"
               );
             }
-
-            console.log(GEOJSONFeatures);
+            
       if(GEOJSONFeatures.length > 0){
           const intersected = GEOJSONFeatures[0]
+          circleFeature.geometry.coordinates = intersected.geometry.coordinates
+      } 
 
-          circleFeature.geometry.coordinates = intersected.geometry.coordinates;
-
-      }
-              
-
-
+      console.log("buffered,",buffered);
             await drawFeatures({
               baseFeatures: GEOJSONFeatures ?? [],
-               highlightFeatures:  [circleFeature] ,       
+               highlightFeatures:  [circleFeature] ,   
+               bufferFeature: buffered,    
               vectorLayerOptions: { clear: true },
               styleOptions: {
                 base: { color: "#808080", radius: 25, isFile: false },
@@ -78,9 +68,7 @@ class MapClickComponent extends React.Component {
               },
             });
 
-
-
-             const combined = [...GEOJSONFeatures];
+          const combined = [...GEOJSONFeatures];
           this.props.setFeatures(combined);
           })
           .catch((error) => {
