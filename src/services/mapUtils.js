@@ -1,86 +1,57 @@
 import { apiRegistry, actionsRegistry } from '@penta-b/ma-lib';
+import  GenerateFeature  from './GenerateFeature';
+import GenrateStyle from './GenerateStyle';
 
 let VL = null;
 
 const ValidateVl = async (options) => {
   if (!VL) {
-    //Create a new Vector Layer & add it to map
+   
     await apiRegistry.getApis(["VectorLayer"]).then(([VectorLayer]) => {
       VL = new VectorLayer();
-      console.log("Adding Vector Layer to map from drawFeatures",VL);
       actionsRegistry.dispatch("addVectorLayer", VL);
     });
-  } else {  options.clear &&  VL.clear(); }
+  } 
+  else {  options.clear &&  VL.clear(); }
 };
 
 
-const genrateStyle = async (styleOptions) => {
-      
-  return await apiRegistry.getApis(["Style", "Fill", "Stroke", "Circle"]).then(
-    ([Style, Fill, Stroke, Circle]) => {
-      let style;
 
-       if (styleOptions?.isFile) {
-        
-        style = new Style({
-          image: new styleOptions.Icon({
-            src: styleOptions.iconSrc,
-          }),
-        });
-      } 
-     
-      else {
 
-        style = new Style(
-          null,
-          null,
-          new Circle(
-            new Fill(styleOptions.color || "rgba(255,0,0,0.5)"),
-            new Stroke( '#808080', 1, null ),
-           styleOptions.radius || 25 //diameter of the circle
-          )
-        )
-      }
-      
-      return style;
-    }
-  );
-};
 
-export const generateFeature = async (geoJSONFeature) => {
-  //geoJsonFeature is an object of json format
-  
-  const [Feature] = await apiRegistry.getApis(["Feature"]);
-  
-  return new Feature({ ...geoJSONFeature });
-  
-};
 
-export const drawFeatures = async ({ baseFeatures = [], bufferFeature = [], highlightFeatures = [], vectorLayerOptions = {}, styleOptions = {} }) => {
+ const DrawFeatures = async ({ 
+  baseFeatures = [],
+   bufferFeature = [],
+    highlightFeatures = [],
+     vectorLayerOptions = {}, 
+     styleOptions = {}
+     }) => {
+
   try {
     await ValidateVl({ clear: vectorLayerOptions.clear ?? true });
 
     const allFeatures = [];
 
    
-    const bufferedfeature = await generateFeature(bufferFeature);
-    bufferedfeature.style = await genrateStyle(styleOptions.buffer || { color: "rgba(0,255,0,0.3)", isFile: false });
- 
+    const bufferedfeature = await GenerateFeature(bufferFeature);
+    bufferedfeature.style = await GenrateStyle({...styleOptions.buffer});
+    
     allFeatures.push(bufferedfeature);
 
     if (baseFeatures.length > 0) {
-      const olBaseFeatures = (await Promise.all(baseFeatures.map(generateFeature))).filter(Boolean);
-      const baseStyle = await genrateStyle(styleOptions.base || { color: "#808080", radius: 25 });
+      const olBaseFeatures = (await Promise.all(baseFeatures.map(GenerateFeature))).filter(Boolean);
+      const baseStyle = await GenrateStyle(styleOptions.base || { color: "#808080"});
       olBaseFeatures.forEach(f => f.setStyle(baseStyle));
-      allFeatures.push(...olBaseFeatures);
+      allFeatures.push(...olBaseFeatures); 
     }
     if (highlightFeatures.length > 0) {
-      const olHighlightFeatures = (await Promise.all(highlightFeatures.map(generateFeature))).filter(Boolean);
+      const olHighlightFeatures = (await Promise.all(highlightFeatures.map(GenerateFeature))).filter(Boolean);
       const color = baseFeatures.length > 0 
       ? (styleOptions.highlight?.color || "#F00000")  
       : (styleOptions.highlight?.color || "#0000FF"); 
       
-      const highlightStyle = await genrateStyle({ ...styleOptions.highlight, color }); 
+      const highlightStyle = await GenrateStyle({ ...styleOptions.highlight, color }); 
       olHighlightFeatures.forEach(f => f.setStyle(highlightStyle));
       allFeatures.push(...olHighlightFeatures);
     }
@@ -93,3 +64,4 @@ export const drawFeatures = async ({ baseFeatures = [], bufferFeature = [], high
   }
 };
 
+export default DrawFeatures;

@@ -19,15 +19,14 @@ const trComponents = [
 const gridComponents = [
   { component: ZoomToFeatureButton, settings: {} },
   { component: HighlightFeatureButton, settings: {} },
+ 
 ];
 
 class MapClickResult extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+ 
 
   render() {
-    const { t } = this.props
+    
 const fature = this.props.features.map((feature) => ({
   ...feature,
   id: feature.id_0 || feature.id,
@@ -53,7 +52,7 @@ const fature = this.props.features.map((feature) => ({
             columns: [
               {
                 id: "id",
-                name: t("Id"),
+                name: "Id",
                 type: "number",
                 display: "basic",
                 filterable: true,
@@ -61,7 +60,7 @@ const fature = this.props.features.map((feature) => ({
               },
               {
                 id: "name",
-                name: t("Marker name"),
+                name: "Marker name",
                 type: "string",
                 display: "basic",
                 filterable: true,
