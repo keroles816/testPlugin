@@ -75,6 +75,7 @@ module.exports = {
         'react-redux': 'react-redux',
         '@penta-b/ma-lib': '@penta-b/ma-lib',
         '@penta-b/grid': '@penta-b/grid',
+        "@penta-b/pbpm-plugin-form-builder": "@penta-b/mna-penta-smart-forms",
       
       
     },

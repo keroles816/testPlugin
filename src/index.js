@@ -1,14 +1,9 @@
-/**
- * Author: Amr Samir
- * 
- * Description: 
- *  - This index file exports plugin's components and/or reducers and/or actions.
- */
 
 import MapClick from './components/MapClick/MapClick.component';
 import MapClickResult from './components/MapClickResult/MapClickResult.component';
 import defaultLocalization from './messages';
 import { LOCALIZATION_NAMESPACE } from './constants/constants';
+import FormBulider from './components/FormBulider/FormBuilder';
 
 import testingPluginReducer from './components/reducers';
 import * as testingPluginActions from './components/selectors';
@@ -23,7 +18,8 @@ MapClick.Icon = LOCALIZATION_NAMESPACE + ":icon";
 
 const components = {
     MapClick,
-    MapClickResult
+    MapClickResult,
+    FormBulider
 };
 
 

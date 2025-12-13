@@ -9,3 +9,12 @@ export const setFeatures = (feature)=>{
         payload:feature,
     }
 }
+
+
+
+export const setLayer= (layer) =>{
+    return {
+        type:"SET_LAYER",
+        payload:layer,
+    }
+}

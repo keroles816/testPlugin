@@ -2,10 +2,9 @@ import * as actions from '../actions';
 
 const initialState={
     features: [],
+    layer:[],
 }
 
-
-//reducer function
 const reducer=(state=initialState , action)=>{
   switch(action.type){
     case actions.SET_FEATURES:
@@ -13,6 +12,12 @@ const reducer=(state=initialState , action)=>{
             ...state,
             features:[...action.payload],
         }
+        case "SET_LAYER":
+          return{
+            ...state,
+            layer:[action.payload]
+
+          }
         default:
             return {...state}
   }

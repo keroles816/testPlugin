@@ -3,13 +3,17 @@ import { connect } from "react-redux";
 import { selectorsRegistry, actionsRegistry } from "@penta-b/ma-lib";
 import  CallQueryService  from "../../services/CallQueryService";
 import  DrawFeatures  from "../../services/mapUtils";
-import { setFeatures } from "../actions";
+import { setFeatures, setLayer } from "../actions";
+
 import ShapePointAndPOlygon from "../shapePointAndPolygon";
 
 
 class MapClickComponent extends React.Component {
- 
+  constructor(props) {
+    super(props);
+  } 
   componentDidUpdate(prevProps) {
+    
   
     if (this.props.isActive) {
       const prevClick = prevProps.singleClick;
@@ -17,12 +21,14 @@ class MapClickComponent extends React.Component {
       if (currentClick && currentClick !== prevClick) {
 
      const coordinate = currentClick.coordinate
+     const {currentClickFeature, bufferPolygon, buffered } = ShapePointAndPOlygon(coordinate);
 
-   const {currentClickFeature, bufferPolygon, buffered } = ShapePointAndPOlygon(coordinate);
+    const LAYER = this.props?.settings.dataSettings.layers[0];
+    console.log("LAYER Form Bulider", LAYER);
+    this.props.setLayer(LAYER)
+  
 
-    const LAYER = this.props?.settings.dataSettings.LAYER;
-
-
+     //layer?.basicSettings?.formFieldsEdit 
         CallQueryService(LAYER, bufferPolygon)
           .then(async (geoJsonFeaturestures) => {
              await DrawFeatures({
@@ -82,6 +88,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setFeatures: (features) => dispatch(setFeatures(features)),
+    setLayer:(layer)=>dispatch(setLayer(layer)),
     notify: (message, type) =>
       dispatch(actionsRegistry.getActionCreator("notify", message, type)),
     showMapClickResult: (props, onAdd) =>

@@ -4,6 +4,9 @@ import { LOCALIZATION_NAMESPACE } from "../../constants/constants";
 import { components } from "@penta-b/grid";
 import { selectFeatures } from "../selectors";
 import { connect } from "react-redux";
+import FormButton from "../../components/Form/FormButton";
+import columnFiled from "../ColumFiled";
+
 const Grid = components.Grid;
 const ZoomToFeatureButton = componentRegistry.getComponent(
   "ZoomToFeatureButton"
@@ -19,7 +22,9 @@ const trComponents = [
 const gridComponents = [
   { component: ZoomToFeatureButton, settings: {} },
   { component: HighlightFeatureButton, settings: {} },
- 
+ {component:FormButton, settings:{
+  
+ }},
 ];
 
 class MapClickResult extends React.Component {
@@ -50,31 +55,11 @@ const fature = this.props.features.map((feature) => ({
             resizable: true,
 
             columns: [
-              {
-                id: "id",
-                name: "Id",
-                type: "number",
-                display: "basic",
-                filterable: true,
-                sortable: true,
-              },
-              {
-                id: "name",
-                name: "Marker name",
-                type: "string",
-                display: "basic",
-                filterable: true,
-                sortable: false,
-              },
-              {
-                id:"feature",
-                name: "",
-                type: "component",
-                display: "basic",
-                filterable: false,
-                sortable: false,
-              },
+              columnFiled({ id: "id", name: "ID", type: "string",filterable:true,sortable:true }),
+              columnFiled({ id: "name", name: "Name", type: "string",filterable:true,sortable:true }),
+              columnFiled({ id: "feature", name: "", type: "component", filterable:false,sortable:false }),
             ],
+            
             data: fature,
           }}
         />
