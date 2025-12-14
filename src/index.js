@@ -8,6 +8,7 @@ import FormBulider from './components/FormBulider/FormBuilder';
 import testingPluginReducer from './components/reducers';
 import * as testingPluginActions from './components/selectors';
 import * as testingPluginSelectors from './components/actions';
+import SearchBulider from './components/SearchBulider/SearchBulider';
 
 const reducers={testingPluginReducer}
 const actions={...testingPluginActions}
@@ -16,12 +17,14 @@ const selctors={...testingPluginSelectors}
 MapClick.Title = LOCALIZATION_NAMESPACE + ":title";
 MapClick.Icon = LOCALIZATION_NAMESPACE + ":icon";
 
+SearchBulider.Title = LOCALIZATION_NAMESPACE + ":searchBulider.title";
+SearchBulider.Icon = LOCALIZATION_NAMESPACE + ":searchBulider.icon";
 const components = {
     MapClick,
     MapClickResult,
-    FormBulider
+    FormBulider,
+   SearchBulider
 };
-
 
 const localization = {
     namespace: LOCALIZATION_NAMESPACE,

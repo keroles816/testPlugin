@@ -63,17 +63,8 @@ const intialzedData = useCallback(async(data)=>{
             },
            
             properties: {
-              col56: true,
-            basicdata3: "9oo",
-            col52: 88,
-            col68: "1970-01-01T03:50:06.000+0000",
-            basicdata11: "99",
             id_0: newMaxId,          
-            col44: "8",
-            col64: "2015-05-16T00:00:00.000+0000",
-            col48: -1332123793,
-            col60: "2015-05-16T03:50:06.000+0000",
-              name:formData.textfiled1
+            name:formData.textfiled1
             }
           }
 

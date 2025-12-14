@@ -22,6 +22,7 @@ class MapClickComponent extends React.Component {
      const coordinate = currentClick.coordinate
      const {currentClickFeature, bufferPolygon, buffered } = ShapePointAndPOlygon(coordinate);
 
+     
     const LAYER = this.props?.settings.dataSettings.layers[0];
     this.props.setLayer(LAYER)
 

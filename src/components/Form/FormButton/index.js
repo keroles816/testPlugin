@@ -21,7 +21,6 @@ class FormButton extends React.Component {
   openForm() {
      
     const LAYER = this.props?.settings
-    console.log("LAYER FormButton in form Bulider", LAYER);
 
   try {
   
