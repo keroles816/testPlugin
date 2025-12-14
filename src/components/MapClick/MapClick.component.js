@@ -4,7 +4,6 @@ import { selectorsRegistry, actionsRegistry } from "@penta-b/ma-lib";
 import  CallQueryService  from "../../services/CallQueryService";
 import  DrawFeatures  from "../../services/mapUtils";
 import { setFeatures, setLayer } from "../actions";
-
 import ShapePointAndPOlygon from "../shapePointAndPolygon";
 
 
@@ -24,11 +23,9 @@ class MapClickComponent extends React.Component {
      const {currentClickFeature, bufferPolygon, buffered } = ShapePointAndPOlygon(coordinate);
 
     const LAYER = this.props?.settings.dataSettings.layers[0];
-    console.log("LAYER Form Bulider", LAYER);
     this.props.setLayer(LAYER)
-  
 
-     //layer?.basicSettings?.formFieldsEdit 
+
         CallQueryService(LAYER, bufferPolygon)
           .then(async (geoJsonFeaturestures) => {
              await DrawFeatures({

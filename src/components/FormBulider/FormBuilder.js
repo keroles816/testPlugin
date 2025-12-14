@@ -1,23 +1,22 @@
 import React,{useCallback, useState,useEffect} from "react";
 import { connect } from "react-redux";
-import {
-  withLocalize,
-} from "@penta-b/ma-lib";
 import { selectLayer,selectFeatures } from "../selectors";
 import { Form,validationService,initializeFieldValues } from "@penta-b/pbpm-plugin-form-builder";
 import { LOCALIZATION_NAMESPACE } from "../../constants/constants";
-import { selectorsRegistry, actionsRegistry } from "@penta-b/ma-lib";
+import { selectorsRegistry, withLocalize,} from "@penta-b/ma-lib";
 import { setFeatures } from "../actions";
 import callAddService from "../../services/callAddService";
+import CallMaxIdFeature from "../../services/getMaxidvalue/callMaxidFeature";
+
 
 const FormBulider = (props) => {
   const [formData, setFormData] = useState({});
   
-// const schema = Layer[0]?.basicSettings.formFieldEdit;
+  
+
 const schema = props?.Layer[0]?.basicSettings.formFieldsAdd;
  const currentClick = props.singleClick;
 const coordinate = currentClick.coordinate
-
 
 
 const handleDataChange= useCallback((data)=>{
@@ -48,7 +47,37 @@ const intialzedData = useCallback(async(data)=>{
           schema,
           formData
         )
-        
+
+
+        CallMaxIdFeature(props.Layer[0]).then((
+          async(
+            maxIdResponse)=>{
+              const newMaxId=maxIdResponse+1
+       
+         const newFeature={
+            type: "Feature",
+            
+            geometry: {
+              type: "Point",
+              coordinates: coordinate
+            },
+           
+            properties: {
+              col56: true,
+            basicdata3: "9oo",
+            col52: 88,
+            col68: "1970-01-01T03:50:06.000+0000",
+            basicdata11: "99",
+            id_0: newMaxId,          
+            col44: "8",
+            col64: "2015-05-16T00:00:00.000+0000",
+            col48: -1332123793,
+            col60: "2015-05-16T03:50:06.000+0000",
+              name:formData.textfiled1
+            }
+          }
+
+
 
    const testPayload = [        
      {
@@ -58,51 +87,17 @@ const intialzedData = useCallback(async(data)=>{
     },
     
       features: [
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: coordinate
-          },
-          
-          name: formData.textfiled1,
-          properties: {
-            col56: true,
-            basicdata3: "9oo",
-            col52: 88,
-            col68: "1970-01-01T03:50:06.000+0000",
-            basicdata11: "99",
-            id_0: 1006,          
-            col44: "8",
-            col64: "2015-05-16T00:00:00.000+0000",
-            col48: -1332123793,
-            col60: "2015-05-16T03:50:06.000+0000",
-            name: formData.textfiled1
-          }
-        }
+        newFeature
       ],
      
     crs: props.Layer[0]?.crs 
   }
 ]
- 
 
-          const newFeature={
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: coordinate
-            },
-            properties: {
-             
-              name:formData.textfiled1
-            }
-          }
-                      
-        callAddService(
+     callAddService(
           testPayload,
-          (res) => {
-            console.log("Add Service Response:", res);
+          () => {
+           
           props.setFeatures([...props.features,newFeature]);
           },
           (err) => {
@@ -110,18 +105,28 @@ const intialzedData = useCallback(async(data)=>{
           }
         );
 
-
-        if (isDataValid.valid) {
-          console.log("Form data is valid. Proceed with submission.");
-        } 
+        }))
+          
+                     
       }
+
+
       catch (error) {
         console.error("Validation service error:", error);
       }
     }
     
   return (
-    <>
+    
+    <div style={{
+      padding:"10px",
+      display:"flex",
+      flexDirection:"column",
+      gap:"10px",
+      alignItems:"center",
+      justifyContent:"center",
+      marginTop:"20px",
+      }}>
    <Form
    schema={schema}
    data={formData}
@@ -129,10 +134,29 @@ const intialzedData = useCallback(async(data)=>{
    onDataChange={handleDataChange}
    />
 
-   <button onClick={() =>validateForm() }>
-    add a new point
+   <button style={{
+    backgroundColor:"#000000",
+    marginTop:"10px",
+    borderRadius:"10px",
+    border:"none",
+    cursor:"pointer",
+
+   }}  
+   onClick={() =>validateForm() }>
+    <p style={{
+      color:"#FFFFFF",
+      fontSize:"18px",
+      textAlign:"center",
+      padding:"10px 20px",
+
+      
+      }}> Add a new point</p>
+
     </button>
-   </>
+
+    </div>
+  
+ 
   )
 };
 

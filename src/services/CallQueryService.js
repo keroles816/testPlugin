@@ -8,12 +8,10 @@ import GenerateQueryBody from "./GenerateQueryBody";
 
     try{
       const response = await query.queryFeatures(GenerateQueryBody(LAYER,bufferPolygon));
-      
             
       const featuresData = response?.data?.[0]?.features?
         JSON.parse(response.data[0].features).features : [];
-
-      return featuresData ;
+      return featuresData;
     }
   catch (error) {
   console.error(" Query failed:", error);

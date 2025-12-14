@@ -83,7 +83,18 @@ class FormButton extends React.Component {
 
 
   render() {
-    return <li onClick={this.openForm}>Add new point</li>;
+    return <button style={{
+      padding:"10px 20px",
+    
+      borderRadius:"20px",
+      border:"none",
+      cursor:"pointer",
+      fontSize:"16px",
+      
+
+    }} onClick={this.openForm}>
+    ✚ Add a new Point  
+      </button>;
   }
 }
 

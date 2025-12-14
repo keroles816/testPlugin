@@ -34,7 +34,7 @@ class MapClickResult extends React.Component {
     
 const fature = this.props.features.map((feature) => ({
   ...feature,
-  id: feature.id_0 || feature.id,
+  id: `Enterprise.${feature.properties.id_0}` || feature.id,
   name: feature.properties.name,
  
 }));
@@ -45,7 +45,7 @@ const fature = this.props.features.map((feature) => ({
           trComponents={trComponents}
           gridComponents={gridComponents}
           settings={{
-            name: "Map Click Result",
+            name: "MapClick Result",
             rowIdentifier: "id",
             selectable: false,
             sortable: true,
