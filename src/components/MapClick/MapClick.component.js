@@ -5,73 +5,86 @@ import  CallQueryService  from "../../services/CallQueryService";
 import  DrawFeatures  from "../../services/mapUtils";
 import { setFeatures, setLayer } from "../actions";
 import ShapePointAndPOlygon from "../shapePointAndPolygon";
+import { useEffect, useRef } from "react";
 
+/* interface MapClickProps {
+  singleClick:{coordinate:number[],screenCoordinate:number[]}|null,
+  isActive:boolean,
+} */
+const MapClickComponent = ({
+  singleClick,
+  isActive,
+  settings,
+  setLayer,
+  setFeatures,
+  showMapClickResult,
+  removeMapClickResult,
+}) => {
+  const componentIdRef = useRef(null);
+  const prevClickRef = useRef(null);
+  console.log("singleClick", singleClick,"isActive", isActive,
+    "settings", settings,"setLayer", setLayer,"setFeatures",
+     setFeatures,"showMapClickResult", showMapClickResult,
+     "removeMapClickResult", removeMapClickResult);
 
-class MapClickComponent extends React.Component {
-  constructor(props) {
-    super(props);
-  } 
-  componentDidUpdate(prevProps) {
-    
-  
-    if (this.props.isActive) {
-      const prevClick = prevProps.singleClick;
-      const currentClick = this.props.singleClick;
-      if (currentClick && currentClick !== prevClick) {
+ 
+  useEffect(() => {
+    if (!isActive) return;
 
-     const coordinate = currentClick.coordinate
-     const {currentClickFeature, bufferPolygon, buffered } = ShapePointAndPOlygon(coordinate);
+    const prevClick = prevClickRef.current;
+    const currentClick = singleClick;
 
-     
-    const LAYER = this.props?.settings.dataSettings.layers[0];
-    this.props.setLayer(LAYER)
+    if (currentClick && currentClick !== prevClick) {
+      const coordinate = currentClick.coordinate;
 
+      const {
+        currentClickFeature,
+        bufferPolygon,
+        buffered,
+      } = ShapePointAndPOlygon(coordinate);
 
-        CallQueryService(LAYER, bufferPolygon)
-          .then(async (geoJsonFeaturestures) => {
-             await DrawFeatures({
-              baseFeatures: geoJsonFeaturestures ?? [],
-               highlightFeatures:  [currentClickFeature] ,   
-               bufferFeature: buffered,    
-              vectorLayerOptions: { clear: true },
-              styleOptions: {
-                base: { color: "#808080", radius: 25, isFile: false },
-                highlight: { radius: 10, isFile: false },
-                buffer: { color: "#f0f0f0", isFile: false }, 
-              },
-            });
-            
+      const LAYER = settings.dataSettings.layers[0];
+      setLayer(LAYER);
 
-          const combined = [...geoJsonFeaturestures];
-          this.props.setFeatures(combined);
-          
-          })
-          
-          .catch((error) => {
-            console.error("Error in callQuery Service" + error);
+      CallQueryService(LAYER, bufferPolygon)
+        .then(async (geoJsonFeatures) => {
+          await DrawFeatures({
+            baseFeatures: geoJsonFeatures ?? [],
+            highlightFeatures: [currentClickFeature],
+            bufferFeature: buffered,
+            vectorLayerOptions: { clear: true },
+            styleOptions: {
+              base: { color: "#808080", radius: 25 },
+              highlight: { radius: 10 },
+              buffer: { color: "#f0f0f0" },
+            },
           });
+
+          setFeatures([...geoJsonFeatures]);
+        })
+        .catch(console.error);
+    }
+
+    prevClickRef.current = currentClick;
+  }, [singleClick, isActive]);
+
+ 
+  useEffect(() => {
+    if (isActive) {
+      showMapClickResult({}, (id) => {
+        // Store the component ID in the ref
+        componentIdRef.current = id; 
+      });
+    } else if(!isActive) {
+      if (componentIdRef.current) {
+        removeMapClickResult(componentIdRef.current);
+        componentIdRef.current = null;
       }
     }
-    if (this.props.isActive && prevProps.isActive != this.props.isActive) {
-      this.props.showMapClickResult(
-        {
-          removeMapClickResult: this.removeMapClickResult,
-        },
-        (id) => {
-          this.id = id;
-        }
-      );
-    } else if (!this.props.isActive) {
-      this.id && this.props.removeMapClickResult(this.id);
-      this.props.removeMapClickResult(this.currentCID);
-      this.currentCID = null;
-    }
-  }
+  }, [isActive]);
 
-  render() {
-    return null;
-  }
-}
+  return null;
+};
 
 const mapStateToProps = (state, ownProps) => {
   return {

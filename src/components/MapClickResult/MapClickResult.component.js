@@ -27,18 +27,16 @@ const gridComponents = [
  }},
 ];
 
-class MapClickResult extends React.Component {
- 
-
-  render() {
-    
-const fature = this.props.features.map((feature) => ({
+const MapClickResult=({features}) => {
+   
+const fature = features.map((feature) => ({
   ...feature,
   id: `Enterprise.${feature.properties.id_0}` || feature.id,
   name: feature.properties.name || "Unnamed",
+
  
 }));
-console.log("features in MapClickResult",this.props.features);
+
     return (
       <div>
         <Grid
@@ -65,7 +63,7 @@ console.log("features in MapClickResult",this.props.features);
         />
       </div>
     );
-  }
+  
 }
 const mapStateToProps = (state) => {
   return {
